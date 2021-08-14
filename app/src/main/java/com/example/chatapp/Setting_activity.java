@@ -13,7 +13,10 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -26,6 +29,9 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import org.jetbrains.annotations.NotNull;
+
+import java.io.File;
+import java.io.IOException;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -58,12 +64,13 @@ public class Setting_activity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
                 //Toast.makeText(Setting_activity.this, snapshot.toString(), Toast.LENGTH_SHORT).show();
-                 name = snapshot.child("name").getValue().toString();
+                name = snapshot.child("name").getValue().toString();
                 String image = snapshot.child("image").getValue().toString();
                 String status = snapshot.child("status").getValue().toString();
                 String thumb_image = snapshot.child("thumb image").getValue().toString();
                 name_dis.setText(name);
                 status_dis.setText(status);
+                Glide.with(Setting_activity.this).load(image).into(pic);
             }
 
             @Override
@@ -100,20 +107,40 @@ public class Setting_activity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1 && resultCode == RESULT_OK && data != null && data.getData() != null) {
             image_uri = data.getData();
-            pic.setImageURI(image_uri);
+            //pic.setImageURI(image_uri);
             upload_pic();
         }
     }
 
     private void upload_pic() {
-        StorageReference imageref=imagestore.child("profile_picture").child(name + ".jpg");
+        StorageReference imageref = imagestore.child("profile_picture").child(name + ".jpg");
         if (image_uri != null) {
             imageref.putFile(image_uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    Toast.makeText(Setting_activity.this, "Image Saved!", Toast.LENGTH_SHORT).show();
+                    if (taskSnapshot.getMetadata() != null) {
+                        if (taskSnapshot.getMetadata().getReference() != null) {
+                            Task<Uri> result = taskSnapshot.getStorage().getDownloadUrl();
+                            result.addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    String imageUrl = uri.toString();
+                                    //createNewPost(imageUrl);
+                                    databaseReference.child("image").setValue(imageUrl).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull @NotNull Task<Void> task) {
+                                            if (task.isSuccessful()) {
+                                                Toast.makeText(Setting_activity.this, "Successfully Changed!", Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    }
                 }
             });
         }
     }
 }
+
