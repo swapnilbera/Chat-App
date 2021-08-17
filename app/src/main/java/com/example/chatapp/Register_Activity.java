@@ -85,7 +85,7 @@ DatabaseReference database;
                     HashMap<String,String> map=new HashMap<>();
                     map.put("name",nick_name);
                     map.put("status","Hi ! There I Am Using Chat App.");
-                    map.put("image","default");
+                    map.put("image","https://cdn4.iconfinder.com/data/icons/ionicons/512/icon-ios7-contact-512.png");
                     map.put("thumb image","default");
                    database.setValue(map).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override

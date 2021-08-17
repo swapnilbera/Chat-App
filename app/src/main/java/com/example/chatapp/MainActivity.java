@@ -81,6 +81,11 @@ public class MainActivity extends AppCompatActivity {
              Intent intent=new Intent(MainActivity.this,Setting_activity.class);
              startActivity(intent);
          }
+         else if (item.getItemId()==R.id.all_users){
+             Intent intent=new Intent(MainActivity.this,all_users.class);
+           startActivity(intent);
+             Toast.makeText(this, "Working", Toast.LENGTH_SHORT).show();
+        }
          return true;
     }
 }
