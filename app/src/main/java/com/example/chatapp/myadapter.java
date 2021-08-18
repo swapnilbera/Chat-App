@@ -34,7 +34,7 @@ public class myadapter extends FirebaseRecyclerAdapter<model,myadapter.myViewhol
     protected void onBindViewHolder(@NonNull @NotNull myadapter.myViewholder holder, int position, @NonNull @NotNull model model) {
     holder.name.setText(model.getName());
         holder.status.setText(model.getStatus());
-        Glide.with(holder.image.getContext()).load(model.getImage()).into(holder.image);
+        //Glide.with(holder.image.getContext()).load(model.getImage()).into(holder.image);
 
     }
 
@@ -51,7 +51,7 @@ public class myadapter extends FirebaseRecyclerAdapter<model,myadapter.myViewhol
        TextView name,status;
         public myViewholder(@NonNull @NotNull View itemView) {
             super(itemView);
-            image=itemView.findViewById(R.id.profile_image);
+          //  image=itemView.findViewById(R.id.profile_image);
             name=itemView.findViewById(R.id.textView5);
             status=itemView.findViewById(R.id.textView6);
         }
